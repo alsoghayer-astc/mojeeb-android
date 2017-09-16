@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Mojeeb App</string>
-
+    <string name="hello_user">Hello %s</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
@@ -17,5 +17,14 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="title_my_account">My Account</string>
+    <string name="title_order_history">My Orders</string>
     <!-- AIzaSyB9xF6JyVKLjot74UU0ATnIKPVrz46mpVQ -->
+
+    <string name="facebook_app_id">1894998860763972</string>
+    <string name="fb_login_protocol_scheme">fb1894998860763972</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

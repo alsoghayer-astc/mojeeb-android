@@ -3,35 +3,38 @@ package sa.com.mojeeb.mojeebapp;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -41,18 +44,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-
-import static android.Manifest.permission.READ_CONTACTS;
+import sa.com.mojeeb.mojeebapp.sa.com.mojeeb.mojeebapp.fragment.FacebookLoginFragment;
+import sa.com.mojeeb.mojeebapp.utils.LoginUtils;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,GoogleApiClient.OnConnectionFailedListener {
+public class LoginActivity extends FragmentActivity implements FacebookLoginFragment.OnFragmentInteractionListener, LoaderCallbacks<Cursor>,GoogleApiClient.OnConnectionFailedListener {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -95,47 +94,63 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return false;
         });
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this , this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
+        findViewById(R.id.facebook_fragment_container);
+
+        mGoogleApiClient = LoginUtils.googleApiClient;
+
         findViewById(R.id.google_sign_in_button).setOnClickListener((View v)-> signIn());
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(view -> attemptLogin());
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        setupFacebookLoginFragment();
+    }
+
+
+    private void setupFacebookLoginFragment(){
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
+        FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
+        fragmentTransaction.add(R.id.facebook_fragment_container,facebookLoginFragment,"FACEBOOK_FRAGMENT");
+        fragmentTransaction.commit();
     }
 
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.e("ACTIVITY RESULT","Got Result:" + requestCode);
 
         if (requestCode == RC_GOOGLE_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
+
+    }
+
+    private void finishWithSuccessLogin(){
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("loginStatus", true);
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
         Log.e("LoginActivity", "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
-            Log.e("LoginActivity", "SHOULD DISPLAY TOAST");
             GoogleSignInAccount acct = result.getSignInAccount();
             Toast.makeText(this.getBaseContext(), "Hello: " + acct.getDisplayName(),Toast.LENGTH_LONG)
                 .show();
-            //updateUI(true);
+            //TODO: Save login for future app initializations, it's not saved automatically like facebook
+            finishWithSuccessLogin();
         } else {
             // Signed out, show unauthenticated UI.
             // updateUI(false);
@@ -205,6 +220,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask.execute((Void) null);
         }
     }
+
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
@@ -288,6 +304,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e("ERROR #######",connectionResult.getErrorMessage());
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
     private interface ProfileQuery {

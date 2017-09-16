@@ -23,15 +23,21 @@ android {
     }
 }
 
+
+
+
+
 dependencies {
+    implementation 'com.android.support:support-v4:25.4.0'
+    implementation 'com.google.android.gms:play-services-maps:11.2.2'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:25.4.0'
     compile 'com.android.support:design:25.3.1'
-    compile 'com.google.android.gms:play-services-auth:11.0.4'
+    compile 'com.google.android.gms:play-services-auth:11.2.2'
     apply plugin: 'com.google.gms.google-services'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'io.reactivex.rxjava2:rxjava:2.1.3'
