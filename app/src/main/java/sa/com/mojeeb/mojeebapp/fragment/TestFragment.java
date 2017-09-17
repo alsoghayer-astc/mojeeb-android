@@ -1,9 +1,14 @@
-package sa.com.mojeeb.mojeebapp.sa.com.mojeeb.mojeebapp.fragment;
+package sa.com.mojeeb.mojeebapp.fragment;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,22 +22,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import sa.com.mojeeb.mojeebapp.R;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TestFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TestFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class TestFragment extends SupportMapFragment implements OnMapReadyCallback{
+public class TestFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap mMap;
+    private SupportMapFragment mapFragment;
 
     private OnFragmentInteractionListener mListener;
 
     public TestFragment() {
-        // Required empty public constructor
+        super();
     }
 
     /**
@@ -47,25 +44,26 @@ public class TestFragment extends SupportMapFragment implements OnMapReadyCallba
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        getMapAsync(this);
-    }
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//
+//        //getMapAsync(this);
+//    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_test, container, false);
-    }
+        View view = inflater.inflate(R.layout.fragment_test, container, false);
+        FragmentManager fragmentManager = getChildFragmentManager();
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        mapFragment = (SupportMapFragment) fragmentManager.findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        Log.e("TESTFRAGMENT", "smf is null ?" + (mapFragment == null));
+
+        return view;
     }
 
     @Override
@@ -87,10 +85,23 @@ public class TestFragment extends SupportMapFragment implements OnMapReadyCallba
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.e("TestFragment", "Map Is Ready" + googleMap.toString());
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(-34, 151);
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }

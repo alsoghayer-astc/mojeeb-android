@@ -1,4 +1,4 @@
-package sa.com.mojeeb.mojeebapp.sa.com.mojeeb.mojeebapp.fragment;
+package sa.com.mojeeb.mojeebapp.fragment;
 
 import android.content.Context;
 import android.content.Intent;

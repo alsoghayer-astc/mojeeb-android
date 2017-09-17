@@ -8,7 +8,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 
@@ -17,7 +16,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import sa.com.mojeeb.mojeebapp.sa.com.mojeeb.mojeebapp.fragment.TestFragment;
+import java.util.HashMap;
+import java.util.Map;
+
+import sa.com.mojeeb.mojeebapp.fragment.TestFragment;
 import sa.com.mojeeb.mojeebapp.utils.LoginUtils;
 
 public class MainActivity extends AppCompatActivity implements TestFragment.OnFragmentInteractionListener, GoogleApiClient.OnConnectionFailedListener {
@@ -27,36 +29,40 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     private boolean isLoggedIn = false;
     private ProgressBar loginProgressBar;
     private FragmentManager supportFragmentManager;
+    private Map<Integer,Fragment> fragments = new HashMap<>();
+
+    private void setupFragmentsMap(){
+        fragments.put(R.id.navigation_home,TestFragment.newInstance());
+    }
+    private Fragment getFragment(int id){
+        return fragments.get(id);
+    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    setFragment(TestFragment.newInstance());
-                    return true;
-                case R.id.navigation_dashboard:
-                    //mTextMessage.setText(R.string.title_dashboard);
-                    return true;
-                case R.id.navigation_notifications:
-                    //mTextMessage.setText(R.string.title_notifications);
-                    return true;
-                case R.id.navigation_my_account:
-                    //mTextMessage.setText(R.string.title_my_account);
-                    return true;
-                case R.id.navigation_order_history:
-                    //mTextMessage.setText(R.string.title_order_history);
-                    return true;
-            }
-            return false;
-        }
-    };
+            = item -> {
+                switch (item.getItemId()) {
+                    case R.id.navigation_home:
+                        setFragment(getFragment(R.id.navigation_home));
+                        return true;
+                    case R.id.navigation_dashboard:
+                        //mTextMessage.setText(R.string.title_dashboard);
+                        return true;
+                    case R.id.navigation_notifications:
+                        //mTextMessage.setText(R.string.title_notifications);
+                        return true;
+                    case R.id.navigation_my_account:
+                        //mTextMessage.setText(R.string.title_my_account);
+                        return true;
+                    case R.id.navigation_order_history:
+                        //mTextMessage.setText(R.string.title_order_history);
+                        return true;
+                }
+                return false;
+            };
 
     private void setFragment(Fragment fragment){
         supportFragmentManager.beginTransaction()
-                .add(fragment,"SomeFragment").commit();
+                .replace(R.id.fragment_container,fragment).commit();
     }
 
     private void goToLogin(){
@@ -67,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setupFragmentsMap();
         setContentView(R.layout.activity_main);
         supportFragmentManager = getSupportFragmentManager();
 
@@ -75,8 +82,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
                 .requestEmail()
                 .build();
         GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */,
-                        this /* OnConnectionFailedListener */)
+                .enableAutoManage(this,this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
@@ -96,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
        // mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        setFragment(getFragment(R.id.navigation_home));
     }
 
     @Override
@@ -105,19 +112,15 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
             if(data == null || !data.hasExtra("loginStatus"))
                 goToLogin();
             else if( data.getBooleanExtra("loginStatus",false))
-                    updateUI();
+                updateUI();
             else
-                    goToLogin();
+                goToLogin();
         }
     }
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {}
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
+    public void onFragmentInteraction(Uri uri) {}
 }
