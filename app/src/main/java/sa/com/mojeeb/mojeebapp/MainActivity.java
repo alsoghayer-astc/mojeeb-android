@@ -19,8 +19,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.HashMap;
 import java.util.Map;
 
+import sa.com.mojeeb.mojeebapp.fragment.MyAccountFragment;
 import sa.com.mojeeb.mojeebapp.fragment.TestFragment;
+import sa.com.mojeeb.mojeebapp.observable.MyLocation;
 import sa.com.mojeeb.mojeebapp.utils.LoginUtils;
+import sa.com.mojeeb.mojeebapp.utils.SharedUtils;
 
 public class MainActivity extends AppCompatActivity implements TestFragment.OnFragmentInteractionListener, GoogleApiClient.OnConnectionFailedListener {
     private static int RC_LOGIN_RESULT = 11;
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
 
     private void setupFragmentsMap(){
         fragments.put(R.id.navigation_home,TestFragment.newInstance());
+        fragments.put(R.id.navigation_my_account, MyAccountFragment.newInstance());
     }
     private Fragment getFragment(int id){
         return fragments.get(id);
@@ -42,19 +46,19 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
             = item -> {
                 switch (item.getItemId()) {
                     case R.id.navigation_home:
-                        setFragment(getFragment(R.id.navigation_home));
+                        setFragment(getFragment(item.getItemId()));
                         return true;
                     case R.id.navigation_dashboard:
-                        //mTextMessage.setText(R.string.title_dashboard);
+                        setFragment(getFragment(item.getItemId()));
                         return true;
                     case R.id.navigation_notifications:
-                        //mTextMessage.setText(R.string.title_notifications);
+                        setFragment(getFragment(item.getItemId()));
                         return true;
                     case R.id.navigation_my_account:
-                        //mTextMessage.setText(R.string.title_my_account);
+                        setFragment(getFragment(item.getItemId()));
                         return true;
                     case R.id.navigation_order_history:
-                        //mTextMessage.setText(R.string.title_order_history);
+                        setFragment(getFragment(item.getItemId()));
                         return true;
                 }
                 return false;
@@ -86,6 +90,9 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        MyLocation myLocation = MyLocation.newInstance(getBaseContext());
+        SharedUtils.locationObservable = myLocation.subscribe();
+        SharedUtils.myLocation = myLocation;
         LoginUtils.googleApiClient = mGoogleApiClient;
         LoginUtils.isLoggedIn().subscribe(i->loginStatusChanged(i));
     }
