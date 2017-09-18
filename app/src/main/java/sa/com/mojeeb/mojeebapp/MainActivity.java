@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
 
         loginProgressBar = (ProgressBar)findViewById(R.id.login_progress_bar);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
+                .requestIdToken("685933129721-l7ejlufv6quiacrj3ivnugfaibfj7kpd.apps.googleusercontent.com")
                 .build();
         GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this,this)
