@@ -22,7 +22,12 @@
     <string name="facebook_app_id">1894998860763972</string>
     <string name="fb_login_protocol_scheme">fb1894998860763972</string>
 
+
+    <string name="com.twitter.sdk.android.CONSUMER_KEY">GHwGRNqhLzW5hU06y8BDHBsJq</string>
+    <string name="com.twitter.sdk.android.CONSUMER_SECRET">LL4LK333VDTcz6i6p7puW6aLU0OTxTIk5LKzqACW1b0lwCP40A</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
+
 </resources>

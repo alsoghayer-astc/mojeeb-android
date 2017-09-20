@@ -74,7 +74,7 @@ public class FacebookLoginFragment extends Fragment {
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
-                Log.e("FACEBOOK",loginResult.toString());
+                Log.e("FACEBOOK",loginResult.getAccessToken().getToken());
             }
 
             @Override

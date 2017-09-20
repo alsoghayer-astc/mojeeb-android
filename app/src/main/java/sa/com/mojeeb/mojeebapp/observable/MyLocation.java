@@ -59,7 +59,7 @@ public class MyLocation {
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener((Location location)-> {

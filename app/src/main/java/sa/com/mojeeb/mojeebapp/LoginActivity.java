@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -33,22 +34,26 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import sa.com.mojeeb.mojeebapp.fragment.FacebookLoginFragment;
+import sa.com.mojeeb.mojeebapp.fragment.TwitterLoginFragment;
 import sa.com.mojeeb.mojeebapp.utils.LoginUtils;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends FragmentActivity implements FacebookLoginFragment.OnFragmentInteractionListener, LoaderCallbacks<Cursor>,GoogleApiClient.OnConnectionFailedListener {
+public class LoginActivity extends FragmentActivity implements TwitterLoginFragment.OnFragmentInteractionListener, FacebookLoginFragment.OnFragmentInteractionListener, LoaderCallbacks<Cursor>,GoogleApiClient.OnConnectionFailedListener {
 
     /**
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int RC_GOOGLE_SIGN_IN = 150;
+    private static final String TWITTER_FRAGMENT_TAG = "TWITTER_LOGIN_FRAGMENT";
+    private static final String FACEBOOK_FRAGMENT_TAG = "FACEBOOK_LOGIN_FRAGMENT";
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -67,7 +72,7 @@ public class LoginActivity extends FragmentActivity implements FacebookLoginFrag
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
-    GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient;
 
 
     @Override
@@ -98,6 +103,15 @@ public class LoginActivity extends FragmentActivity implements FacebookLoginFrag
         mProgressView = findViewById(R.id.login_progress);
 
         setupFacebookLoginFragment();
+        setupTwitterLoginFragment();
+    }
+
+    private void setupTwitterLoginFragment(){
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
+        TwitterLoginFragment twitterLoginFragment = TwitterLoginFragment.newInstance();
+        fragmentTransaction.add(R.id.twitter_fragment_container,twitterLoginFragment,TWITTER_FRAGMENT_TAG);
+        fragmentTransaction.commit();
     }
 
 
@@ -105,7 +119,7 @@ public class LoginActivity extends FragmentActivity implements FacebookLoginFrag
         FragmentManager supportFragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
         FacebookLoginFragment facebookLoginFragment = FacebookLoginFragment.newInstance();
-        fragmentTransaction.add(R.id.facebook_fragment_container,facebookLoginFragment,"FACEBOOK_FRAGMENT");
+        fragmentTransaction.add(R.id.facebook_fragment_container,facebookLoginFragment,"FACEBOOK_LOGIN_FRAGMENT");
         fragmentTransaction.commit();
     }
 
@@ -123,8 +137,10 @@ public class LoginActivity extends FragmentActivity implements FacebookLoginFrag
         if (requestCode == RC_GOOGLE_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
+        } else if (requestCode == TwitterAuthConfig.DEFAULT_AUTH_REQUEST_CODE){
+            Fragment twitterLoginFragment = getSupportFragmentManager().findFragmentByTag(TWITTER_FRAGMENT_TAG);
+            twitterLoginFragment.onActivityResult(requestCode,resultCode,data);
         }
-
     }
 
     private void finishWithSuccessLogin(){
@@ -139,6 +155,7 @@ public class LoginActivity extends FragmentActivity implements FacebookLoginFrag
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
+            Log.e("GOOGLESIGNIGN","Token is: " + acct.getIdToken());
             Toast.makeText(this.getBaseContext(), "Hello: " + acct.getDisplayName(),Toast.LENGTH_LONG)
                 .show();
             //TODO: Save login for future app initializations, it's not saved automatically like facebook
