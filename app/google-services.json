@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "685933129721",
-    "project_id": "mojeeb-179607"
+    "firebase_url": "https://mojeeb-179607.firebaseio.com",
+    "project_id": "mojeeb-179607",
+    "storage_bucket": "mojeeb-179607.appspot.com"
   },
   "client": [
     {
@@ -13,11 +15,15 @@
       },
       "oauth_client": [
         {
+          "client_id": "685933129721-q21udu3jp7mgr5tnp3acobe27akjr90v.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
           "client_id": "685933129721-l7ejlufv6quiacrj3ivnugfaibfj7kpd.apps.googleusercontent.com",
           "client_type": 3
         },
         {
-          "client_id": "685933129721-cftrh0uuul9hcqv9uu26pv2o90ri9t54.apps.googleusercontent.com",
+          "client_id": "685933129721-gvp6l5ja8utjs8lvo71eqciu7cou29a7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "sa.com.mojeeb",
@@ -39,7 +45,7 @@
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     },
@@ -52,16 +58,28 @@
       },
       "oauth_client": [
         {
+          "client_id": "685933129721-q21udu3jp7mgr5tnp3acobe27akjr90v.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
           "client_id": "685933129721-bu4066dbbffjl23eu54gos9tr8fvfgfu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "sa.com.mojeeb.mojeebapp",
-            "certificate_hash": "edcf5292e12db0ccec96ff547781f0688902b1dc"
+            "certificate_hash": "ee944758efae4a1c24df633d50c542630c6daffc"
           }
         },
         {
           "client_id": "685933129721-l7ejlufv6quiacrj3ivnugfaibfj7kpd.apps.googleusercontent.com",
           "client_type": 3
+        },
+        {
+          "client_id": "685933129721-n3pisi4sj5a47aaqmlt7tnnvrv4iu8k6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sa.com.mojeeb.mojeebapp",
+            "certificate_hash": "edcf5292e12db0ccec96ff547781f0688902b1dc"
+          }
         }
       ],
       "api_key": [
@@ -74,11 +92,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "685933129721-q21udu3jp7mgr5tnp3acobe27akjr90v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

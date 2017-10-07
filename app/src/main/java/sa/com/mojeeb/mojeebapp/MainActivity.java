@@ -15,6 +15,8 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +35,9 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     private ProgressBar loginProgressBar;
     private FragmentManager supportFragmentManager;
     private Map<Integer,Fragment> fragments = new HashMap<>();
+
+    private FirebaseAuth mAuth;
+
 
     private void setupFragmentsMap(){
         fragments.put(R.id.navigation_home,TestFragment.newInstance());
@@ -77,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAuth = FirebaseAuth.getInstance();
         setupFragmentsMap();
         setContentView(R.layout.activity_main);
         supportFragmentManager = getSupportFragmentManager();
@@ -97,12 +103,26 @@ public class MainActivity extends AppCompatActivity implements TestFragment.OnFr
         LoginUtils.isLoggedIn().subscribe(i->loginStatusChanged(i));
     }
 
-    private void loginStatusChanged(boolean isLoggedIn){
-        if(isLoggedIn){
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        //updateUI(currentUser);
+        if(currentUser != null){
             //loginProgressBar.setVisibility(View.INVISIBLE);
             updateUI();
         }else
             goToLogin();
+    }
+
+    private void loginStatusChanged(boolean isLoggedIn){
+//        if(isLoggedIn){
+//            //loginProgressBar.setVisibility(View.INVISIBLE);
+//            updateUI();
+//        }else
+//            goToLogin();
     }
 
     private void updateUI(){
